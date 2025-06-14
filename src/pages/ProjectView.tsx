@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MessageCircle, GitBranch, Download, Eye, X, Send, Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Sidebar } from "@/components/Sidebar";
 import { CodeEditor } from "@/components/CodeEditor";
 import { StatusBar } from "@/components/StatusBar";
+import { toast } from "@/hooks/use-toast";
 
 export const ProjectView = () => {
   const [activeFile, setActiveFile] = useState("app.tsx");
@@ -42,6 +44,22 @@ export const ProjectView = () => {
     }, 1200);
   };
 
+  // Handler for Preview button
+  const handlePreview = () => {
+    toast({
+      title: "Preview",
+      description: "Your project preview will open soon! (Feature coming soon)",
+    });
+  };
+
+  // Handler for Clone button
+  const handleClone = () => {
+    toast({
+      title: "Clone",
+      description: "A copy of your project will be ready soon! (Feature coming soon)",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#fcf8f2] via-[#fef9fb] to-[#f9f6fc] text-slate-900">
       <header className="bg-white/95 border-b border-yellow-100 px-8 py-3 shadow-lg z-20">
@@ -59,11 +77,21 @@ export const ProjectView = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-100 rounded-full">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-100 rounded-full"
+              onClick={handleClone}
+            >
               <Download className="h-4 w-4 mr-2" />
               Clone
             </Button>
-            <Button variant="ghost" size="sm" className="text-pink-500 hover:text-pink-600 hover:bg-pink-100 rounded-full">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-pink-500 hover:text-pink-600 hover:bg-pink-100 rounded-full"
+              onClick={handlePreview}
+            >
               <Eye className="h-4 w-4 mr-2" />
               Preview
             </Button>

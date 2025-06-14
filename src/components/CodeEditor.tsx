@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Copy, Download, Share, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
 
 interface CodeEditorProps {
   activeFile: string;
@@ -29,6 +30,46 @@ function App() {
 
 export default App;`);
 
+  // Copy code to clipboard
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Copied",
+      description: "Code copied to clipboard!",
+    });
+  };
+
+  // Download code as file (simulate)
+  const handleDownload = () => {
+    const element = document.createElement("a");
+    const file = new Blob([code], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = activeFile;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    toast({
+      title: "Download",
+      description: "Code file downloaded for editing!",
+    });
+  };
+
+  // Share code
+  const handleShare = () => {
+    toast({
+      title: "Share",
+      description: "Code sharing feature coming soon!",
+    });
+  };
+
+  // More menu
+  const handleMore = () => {
+    toast({
+      title: "More Options",
+      description: "More features will be added soon!",
+    });
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-slate-900">
       <div className="flex items-center justify-between bg-slate-800 px-4 py-2 border-b border-slate-700">
@@ -47,16 +88,16 @@ export default App;`);
         </Tabs>
         
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleCopy}>
             <Copy className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleShare}>
             <Share className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleDownload}>
             <Download className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleMore}>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
