@@ -43,12 +43,12 @@ export const ProjectView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-pink-50 text-slate-900">
-      <header className="bg-white/90 border-b border-yellow-100 px-6 py-3 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-br from-[#fcf8f2] via-[#fef9fb] to-[#f9f6fc] text-slate-900">
+      <header className="bg-white/95 border-b border-yellow-100 px-8 py-3 shadow-lg z-20">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-5">
             <span className="flex items-center space-x-1">
-              <Slash className="h-7 w-7 text-yellow-500" />
+              <Slash className="h-8 w-8 text-yellow-500 drop-shadow" />
               <span className="font-serif text-2xl font-bold tracking-tight bg-gradient-to-r from-yellow-600 to-pink-500 bg-clip-text text-transparent">
                 Flash.io
               </span>
@@ -58,12 +58,12 @@ export const ProjectView = () => {
               <span>main</span>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50">
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" size="sm" className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-100 rounded-full">
               <Download className="h-4 w-4 mr-2" />
               Clone
             </Button>
-            <Button variant="ghost" size="sm" className="text-pink-500 hover:text-pink-600 hover:bg-pink-50">
+            <Button variant="ghost" size="sm" className="text-pink-500 hover:text-pink-600 hover:bg-pink-100 rounded-full">
               <Eye className="h-4 w-4 mr-2" />
               Preview
             </Button>
@@ -71,7 +71,7 @@ export const ProjectView = () => {
               variant="ghost"
               size="sm"
               onClick={() => setShowChat(!showChat)}
-              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               AI Chat
@@ -86,20 +86,21 @@ export const ProjectView = () => {
           activeFile={activeFile}
           onFileSelect={setActiveFile}
         />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col bg-white/60 backdrop-blur py-4">
           <CodeEditor activeFile={activeFile} />
           <StatusBar activeFile={activeFile} />
         </div>
         {/* Chat Panel */}
         {showChat && (
-          <div className="w-80 bg-white border-l border-yellow-100 shadow-xl flex flex-col animate-slide-in-right">
-            <div className="flex items-center justify-between p-4 border-b border-yellow-100">
+          <div className="w-80 bg-white border-l border-yellow-100 shadow-2xl flex flex-col animate-slide-in-right">
+            <div className="flex items-center justify-between p-4 border-b border-yellow-100 bg-gradient-to-r from-yellow-50 to-pink-50">
               <h3 className="font-semibold text-slate-900">AI Assistant</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowChat(false)}
                 className="text-slate-400 hover:text-slate-900"
+                aria-label="Close Chat"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -107,13 +108,13 @@ export const ProjectView = () => {
             <div className="flex-1 overflow-auto p-4 space-y-4">
               {chatHistory.map((message) => (
                 <div key={message.id} className={`flex ${message.sender === 'You' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] p-3 rounded-lg ${
+                  <div className={`max-w-[80%] p-3 rounded-lg transition ${
                     message.sender === 'You' 
-                      ? 'bg-yellow-400 text-slate-900 font-semibold'
-                      : 'bg-yellow-100 text-slate-700'
+                      ? 'bg-yellow-300/95 text-slate-900 font-semibold shadow'
+                      : 'bg-yellow-100 text-slate-700 shadow-inner'
                   }`}>
                     <p className="text-sm">{message.message}</p>
-                    <p className="text-xs opacity-70 mt-1">{message.timestamp}</p>
+                    <p className="text-xs opacity-50 mt-1">{message.timestamp}</p>
                   </div>
                 </div>
               ))}

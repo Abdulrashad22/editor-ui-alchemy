@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ArrowLeft, Play, Pause, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -120,96 +119,95 @@ export const ProjectBuilder = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-yellow-50 to-pink-100 text-slate-900">
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="text-gray-400 hover:text-white mb-4"
+            className="text-yellow-500 hover:text-slate-900 mb-4 hover:bg-yellow-100"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Projects
           </Button>
-          
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
             AI Project Builder
           </h1>
-          <p className="text-gray-400 text-lg">
-            Describe your project and watch the AI build it for you
+          <p className="text-gray-500 text-lg">
+            Describe your project and let Flash.io build it for you.
           </p>
         </div>
 
+        {/* INPUT CARD */}
         {!isBuilding && actions.length === 0 && (
-          <div className="max-w-2xl mx-auto">
-            <Card className="bg-slate-800 border-slate-700 p-8">
-              <h2 className="text-xl font-semibold mb-4 text-white">Project Description</h2>
+          <div className="max-w-xl mx-auto">
+            <Card className="bg-white/70 border-yellow-100 p-8 shadow-xl">
+              <h2 className="text-lg font-semibold mb-3 text-yellow-500">What do you want to build?</h2>
               <Input
-                placeholder="Describe the application you want to build..."
+                placeholder="E.g. Blogging platform, dashboard, portfolio site…"
                 value={projectPrompt}
                 onChange={(e) => setProjectPrompt(e.target.value)}
-                className="bg-slate-700 border-slate-600 text-white placeholder-gray-400 mb-4"
+                className="bg-white border-slate-200 text-slate-900 placeholder-gray-400 mb-4"
               />
               <Button
                 onClick={handleStartBuilding}
                 disabled={!projectPrompt.trim()}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                className="w-full bg-gradient-to-r from-yellow-400 to-pink-400 hover:from-yellow-500 hover:to-pink-500 text-white font-semibold rounded-lg text-lg transition-all py-3"
               >
-                Start Building
+                <Play className="h-5 w-5 mr-1" /> Start Building
               </Button>
             </Card>
           </div>
         )}
 
+        {/* STEPPER-LIKE STATUS BOARD */}
         {(isBuilding || actions.length > 0) && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Ongoing Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* Ongoing */}
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-yellow-400">Ongoing Actions</h2>
+              <h2 className="text-base font-semibold mb-4 text-yellow-500">Ongoing Action</h2>
               <div className="space-y-3">
                 {filterActionsByStatus('ongoing').map((action) => (
-                  <Card key={action.id} className={`p-4 border-2 ${getStatusColor(action.status)}`}>
-                    <div className="flex items-start gap-3">
+                  <Card key={action.id} className={`p-4 border-2 border-yellow-300 bg-yellow-50/60`}>
+                    <div className="flex items-center gap-3">
                       {getStatusIcon(action.status)}
-                      <div className="flex-1">
-                        <h3 className="font-medium text-white">{action.title}</h3>
-                        <p className="text-sm text-gray-400 mt-1">{action.description}</p>
+                      <div>
+                        <h3 className="font-medium">{action.title}</h3>
+                        <p className="text-xs text-yellow-800 mt-1">{action.description}</p>
                       </div>
                     </div>
                   </Card>
                 ))}
               </div>
             </div>
-
-            {/* To-Do */}
+            {/* TODO */}
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-400">To-Do</h2>
+              <h2 className="text-base font-semibold mb-4 text-pink-500">To-Do</h2>
               <div className="space-y-3">
                 {filterActionsByStatus('todo').map((action) => (
-                  <Card key={action.id} className={`p-4 border-2 ${getStatusColor(action.status)}`}>
-                    <div className="flex items-start gap-3">
+                  <Card key={action.id} className="p-4 border-2 border-pink-200 bg-pink-50/60">
+                    <div className="flex items-center gap-3">
                       {getStatusIcon(action.status)}
-                      <div className="flex-1">
-                        <h3 className="font-medium text-white">{action.title}</h3>
-                        <p className="text-sm text-gray-400 mt-1">{action.description}</p>
+                      <div>
+                        <h3 className="font-medium">{action.title}</h3>
+                        <p className="text-xs text-pink-800 mt-1">{action.description}</p>
                       </div>
                     </div>
                   </Card>
                 ))}
               </div>
             </div>
-
-            {/* Finished */}
+            {/* FINISHED */}
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-green-400">Finished</h2>
+              <h2 className="text-base font-semibold mb-4 text-green-500">Finished</h2>
               <div className="space-y-3">
                 {filterActionsByStatus('finished').map((action) => (
-                  <Card key={action.id} className={`p-4 border-2 ${getStatusColor(action.status)}`}>
-                    <div className="flex items-start gap-3">
+                  <Card key={action.id} className="p-4 border-2 border-green-200 bg-green-50/60">
+                    <div className="flex items-center gap-3">
                       {getStatusIcon(action.status)}
-                      <div className="flex-1">
-                        <h3 className="font-medium text-white">{action.title}</h3>
-                        <p className="text-sm text-gray-400 mt-1">{action.description}</p>
+                      <div>
+                        <h3 className="font-medium">{action.title}</h3>
+                        <p className="text-xs text-green-800 mt-1">{action.description}</p>
                         {action.timestamp && (
                           <p className="text-xs text-green-400 mt-1">Completed at {action.timestamp}</p>
                         )}

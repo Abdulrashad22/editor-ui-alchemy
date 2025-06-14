@@ -67,71 +67,70 @@ export const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-indigo-100 text-slate-900 transition-colors">
-      <div className="container mx-auto px-6 py-8">
-        <div className="mb-10">
-          <h1 className="text-5xl font-serif font-extrabold mb-2 bg-gradient-to-r from-yellow-400 via-pink-400 to-indigo-500 bg-clip-text text-transparent tracking-tight drop-shadow">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf8f5] via-[#fafffb] to-[#f9f5f6] text-slate-900 transition-colors">
+      <div className="container mx-auto px-6 py-16 flex flex-col items-center">
+        {/* HERO */}
+        <div className="w-full max-w-xl text-center mb-14">
+          <h1 className="text-[3.5rem] sm:text-6xl md:text-7xl font-serif font-extrabold mb-3 tracking-tight bg-gradient-to-br from-yellow-500 via-pink-500 to-indigo-500 bg-clip-text text-transparent drop-shadow">
             Flash.io
           </h1>
-          <p className="text-slate-500 text-lg font-medium">Build apps instantly — powered by AI</p>
+          <p className="sm:text-xl md:text-2xl text-slate-600 font-medium mb-7 leading-relaxed">
+            Instantly turn your idea into working code. 
+          </p>
+          <Button
+            onClick={handleNewProject}
+            className="bg-gradient-to-r from-yellow-400 to-pink-400 hover:from-yellow-500 hover:to-pink-500 text-white font-bold h-14 px-10 rounded-full shadow-2xl text-lg tracking-tight transition-all hover:scale-105"
+          >
+            <span className="mr-2">✨</span> Start New Project
+          </Button>
         </div>
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-yellow-400" />
+        {/* PROJECTS & SEARCH */}
+        <div className="w-full max-w-3xl bg-white/50 shadow-lg rounded-3xl p-8 mb-8 border border-yellow-100 flex flex-col gap-4">
+          <div className="relative mb-4">
             <Input
               placeholder="Find a project…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 h-12 rounded-lg shadow"
+              className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 h-12 rounded-lg shadow focus:ring-4 focus:ring-yellow-100"
             />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-yellow-400" />
           </div>
-          <Button
-            onClick={handleNewProject}
-            className="bg-gradient-to-r from-yellow-400 to-pink-400 hover:from-yellow-500 hover:to-pink-500 text-white font-bold h-12 px-8 rounded-lg shadow-lg transition-all"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            New Project
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-          {filteredProjects.map((project) => (
-            <Card
-              key={project.id}
-              className="bg-white border-2 border-yellow-50 hover:border-yellow-200 shadow-lg p-6 cursor-pointer hover:scale-105 transition-transform duration-300"
-              onClick={() => handleProjectClick(project.id)}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center">
-                  <FolderOpen className="h-7 w-7 text-yellow-400 mr-3" />
-                  <div>
+          <div className="grid grid-cols-1 gap-6">
+            {filteredProjects.map((project) => (
+              <Card
+                key={project.id}
+                className="bg-white border-2 border-yellow-50 hover:border-yellow-200 shadow-md p-5 hover:scale-[1.015] transition transform rounded-xl cursor-pointer"
+                onClick={() => handleProjectClick(project.id)}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center">
+                    <FolderOpen className="h-6 w-6 text-yellow-400 mr-2" />
                     <h3 className="font-semibold text-lg text-slate-900">{project.name}</h3>
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${getStatusColor(project.status)}`}>
-                      {project.status}
-                    </span>
                   </div>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                    {project.status}
+                  </span>
                 </div>
+                <p className="text-slate-500 mb-1 line-clamp-2">{project.description}</p>
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                  <span className="flex items-center">
+                    <User className="h-4 w-4 mr-1" /> {project.author}
+                  </span>
+                  <span className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" /> {project.lastModified}
+                  </span>
+                </div>
+              </Card>
+            ))}
+            {filteredProjects.length === 0 && (
+              <div className="text-center py-8">
+                <FolderOpen className="h-12 w-12 text-yellow-200 mx-auto mb-2" />
+                <h3 className="text-lg font-semibold text-slate-400">No projects found</h3>
+                <p className="text-slate-400">Try a different search or create a new project.</p>
               </div>
-              <p className="text-slate-500 mb-3 line-clamp-2">{project.description}</p>
-              <div className="flex items-center justify-between text-sm text-slate-400">
-                <div className="flex items-center">
-                  <User className="h-4 w-4 mr-1" />
-                  {project.author}
-                </div>
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  {project.lastModified}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-12">
-            <FolderOpen className="h-16 w-16 text-yellow-200 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-400 mb-2">No projects found</h3>
-            <p className="text-slate-400">Try a different search or create a new project.</p>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
