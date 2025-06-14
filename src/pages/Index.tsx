@@ -6,6 +6,7 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { Sidebar } from "@/components/Sidebar";
 import { StatusBar } from "@/components/StatusBar";
 import { FeaturePanel } from "@/components/FeaturePanel";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [activeFile, setActiveFile] = useState("app.tsx");
