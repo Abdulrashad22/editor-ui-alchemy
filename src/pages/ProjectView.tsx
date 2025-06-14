@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { MessageCircle, GitBranch, Download, Eye, X, Send, Flash } from "lucide-react";
+import { MessageCircle, GitBranch, Download, Eye, X, Send, Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -49,7 +48,7 @@ export const ProjectView = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <span className="flex items-center space-x-1">
-              <Flash className="h-7 w-7 text-yellow-500" />
+              <Slash className="h-7 w-7 text-yellow-500" />
               <span className="font-serif text-2xl font-bold tracking-tight bg-gradient-to-r from-yellow-600 to-pink-500 bg-clip-text text-transparent">
                 Flash.io
               </span>
