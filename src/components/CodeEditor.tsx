@@ -1,16 +1,20 @@
 
 import { useState } from "react";
-import { Copy, Download, Share, MoreHorizontal } from "lucide-react";
+import { Copy, Download, Share, MoreHorizontal, Eye, GitBranch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+import sdk from "@stackblitz/sdk";
 
 interface CodeEditorProps {
   activeFile: string;
 }
 
-export const CodeEditor = ({ activeFile }: CodeEditorProps) => {
-  const [code, setCode] = useState(`import React, { useState } from 'react';
+// Dummy code files map for simplicity/demo
+const initialFiles: Record<string, string> = {
+  "app.tsx": `import React, { useState } from 'react';
 import './App.css';
 
 function App() {
@@ -28,7 +32,42 @@ function App() {
   );
 }
 
-export default App;`);
+export default App;`,
+  "index.css": `body {
+  background: #f0e8ff;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+.App-header {
+  font-size: 2rem;
+  color: #460045;
+}`,
+  "package.json": `{
+  "name": "codeforge-demo",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  }
+}`
+};
+
+export const CodeEditor = ({ activeFile }: CodeEditorProps) => {
+  const [code, setCode] = useState(initialFiles[activeFile] || "");
+
+  // Track all file contents in a local state (multi-file support for preview & clone)
+  const [files, setFiles] = useState<Record<string, string>>(initialFiles);
+
+  // When user clicks a tab, update code state
+  const handleTabChange = (tabVal: string) => {
+    setCode(files[tabVal] || "");
+  };
+
+  // Store edits back to files state -- (not implemented: textarea for editing code, but ready)
+  // const handleCodeChange = (value: string) => {
+  //   setCode(value);
+  //   setFiles({ ...files, [activeFile]: value });
+  // };
 
   // Copy code to clipboard
   const handleCopy = () => {
@@ -39,41 +78,82 @@ export default App;`);
     });
   };
 
-  // Download code as file (simulate)
+  // Download code as file
   const handleDownload = () => {
     const element = document.createElement("a");
-    const file = new Blob([code], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
+    const fileBlob = new Blob([code], { type: "text/plain" });
+    element.href = URL.createObjectURL(fileBlob);
     element.download = activeFile;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
     toast({
       title: "Download",
-      description: "Code file downloaded for editing!",
+      description: `${activeFile} downloaded!`,
     });
   };
 
-  // Share code
-  const handleShare = () => {
-    toast({
-      title: "Share",
-      description: "Code sharing feature coming soon!",
+  // Clone project: Download all code as zip
+  const handleClone = async () => {
+    const zip = new JSZip();
+    Object.entries(files).forEach(([filename, contents]) => {
+      zip.file(filename, contents);
     });
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "flashio-project.zip");
+    toast({ title: "Cloned", description: "Project ZIP downloaded!" });
   };
 
-  // More menu
+  // Preview code in new StackBlitz tab (React starter)
+  const handlePreview = async () => {
+    sdk.openProject(
+      {
+        title: "Flash.io Demo Preview",
+        description: "Live preview from Flash.io",
+        template: "create-react-app",
+        files: {
+          "src/App.tsx": files["app.tsx"] || "",
+          "src/index.css": files["index.css"] || "",
+          "package.json": files["package.json"] || ""
+        }
+      },
+      {
+        openFile: "src/App.tsx" // Show primary file in preview
+      }
+    );
+    // No toast: a new tab will open
+  };
+
+  // Share code on StackBlitz - generate and open new link
+  const handleShare = async () => {
+    sdk.openProject(
+      {
+        title: "Flash.io Demo Shared",
+        description: "Complete project from Flash.io",
+        template: "create-react-app",
+        files: {
+          "src/App.tsx": files["app.tsx"] || "",
+          "src/index.css": files["index.css"] || "",
+          "package.json": files["package.json"] || ""
+        }
+      },
+      { openFile: "src/App.tsx" }
+    );
+    toast({ title: "Share", description: "Project shared on StackBlitz (opens in new tab)!" });
+  };
+
+  // More: Show a toast with available actions
   const handleMore = () => {
     toast({
       title: "More Options",
-      description: "More features will be added soon!",
+      description: "Preview, Download, Clone, and Share are fully usable on client.",
     });
   };
 
   return (
     <div className="flex-1 flex flex-col bg-slate-900">
       <div className="flex items-center justify-between bg-slate-800 px-4 py-2 border-b border-slate-700">
-        <Tabs defaultValue={activeFile} className="flex-1">
+        <Tabs defaultValue={activeFile} className="flex-1" onValueChange={handleTabChange}>
           <TabsList className="bg-slate-900">
             <TabsTrigger value="app.tsx" className="data-[state=active]:bg-slate-700">
               app.tsx
@@ -86,34 +166,37 @@ export default App;`);
             </TabsTrigger>
           </TabsList>
         </Tabs>
-        
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleCopy}>
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleCopy} title="Copy">
             <Copy className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleShare}>
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleDownload} title="Download">
+            <Download className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleShare} title="Share (StackBlitz)">
             <Share className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleDownload}>
-            <Download className="h-4 w-4" />
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleClone} title="Clone (ZIP)">
+            <GitBranch className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handlePreview} title="Preview (StackBlitz)">
+            <Eye className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white" onClick={handleMore}>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
       </div>
-
       <div className="flex-1 relative">
         <div className="absolute inset-0 bg-slate-900">
           <div className="flex h-full">
             <div className="w-12 bg-slate-800 flex flex-col items-center py-4 text-sm text-gray-500 font-mono">
-              {Array.from({ length: 20 }, (_, i) => (
+              {Array.from({ length: code.split('\n').length }, (_, i) => (
                 <div key={i + 1} className="h-6 flex items-center">
                   {i + 1}
                 </div>
               ))}
             </div>
-            
             <div className="flex-1 p-4 overflow-auto">
               <pre className="text-sm text-gray-300 font-mono leading-relaxed">
                 <code>

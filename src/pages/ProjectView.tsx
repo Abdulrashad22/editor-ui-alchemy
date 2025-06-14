@@ -8,6 +8,9 @@ import { Sidebar } from "@/components/Sidebar";
 import { CodeEditor } from "@/components/CodeEditor";
 import { StatusBar } from "@/components/StatusBar";
 import { toast } from "@/hooks/use-toast";
+import sdk from "@stackblitz/sdk";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export const ProjectView = () => {
   const [activeFile, setActiveFile] = useState("app.tsx");
@@ -22,6 +25,45 @@ export const ProjectView = () => {
       timestamp: "9:00 AM"
     }
   ]);
+  // Dummy state for editor files — in a real app this should be global or provided by context
+  const [files] = useState({
+    "app.tsx": `import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Welcome to CodeForge</h1>
+        <button onClick={() => setCount(count + 1)}>
+          Count: {count}
+        </button>
+      </header>
+    </div>
+  );
+}
+
+export default App;`,
+    "index.css": `body {
+  background: #f0e8ff;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+.App-header {
+  font-size: 2rem;
+  color: #460045;
+}`,
+    "package.json": `{
+  "name": "codeforge-demo",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  }
+}`
+  });
 
   const handleSendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -44,19 +86,35 @@ export const ProjectView = () => {
     }, 1200);
   };
 
-  // Handler for Preview button
+  // Handler for Preview button -- launches a live preview via StackBlitz
   const handlePreview = () => {
-    toast({
-      title: "Preview",
-      description: "Your project preview will open soon! (Feature coming soon)",
-    });
+    sdk.openProject(
+      {
+        title: "Flash.io Project Preview",
+        description: "Live Preview via Flash.io",
+        template: "create-react-app",
+        files: {
+          "src/App.tsx": files["app.tsx"] || "",
+          "src/index.css": files["index.css"] || "",
+          "package.json": files["package.json"] || ""
+        }
+      },
+      { openFile: "src/App.tsx" }
+    );
+    // No toast needed, new tab opens for preview.
   };
 
-  // Handler for Clone button
-  const handleClone = () => {
+  // Handler for Clone button -- downloads as zip
+  const handleClone = async () => {
+    const zip = new JSZip();
+    Object.entries(files).forEach(([filename, contents]) => {
+      zip.file(filename, contents);
+    });
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "flashio-project.zip");
     toast({
       title: "Clone",
-      description: "A copy of your project will be ready soon! (Feature coming soon)",
+      description: "Project ZIP downloaded!",
     });
   };
 
@@ -107,7 +165,6 @@ export const ProjectView = () => {
           </div>
         </div>
       </header>
-
       <div className="flex h-[calc(100vh-64px)] relative">
         <Sidebar 
           collapsed={sidebarCollapsed}
@@ -115,6 +172,7 @@ export const ProjectView = () => {
           onFileSelect={setActiveFile}
         />
         <div className="flex-1 flex flex-col bg-white/60 backdrop-blur py-4">
+          {/* Pass down props as usual */}
           <CodeEditor activeFile={activeFile} />
           <StatusBar activeFile={activeFile} />
         </div>
