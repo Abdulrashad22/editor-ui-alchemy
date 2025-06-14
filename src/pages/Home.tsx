@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Plus, FolderOpen, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,59 +67,52 @@ export const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-indigo-100 text-slate-900 transition-colors">
       <div className="container mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            AI Code Builder
+        <div className="mb-10">
+          <h1 className="text-5xl font-serif font-extrabold mb-2 bg-gradient-to-r from-yellow-400 via-pink-400 to-indigo-500 bg-clip-text text-transparent tracking-tight drop-shadow">
+            Flash.io
           </h1>
-          <p className="text-gray-400 text-lg">
-            Create applications with natural language prompts
-          </p>
+          <p className="text-slate-500 text-lg font-medium">Build apps instantly — powered by AI</p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 mb-10">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-yellow-400" />
             <Input
-              placeholder="Search projects..."
+              placeholder="Find a project…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-slate-800 border-slate-600 text-white placeholder-gray-400 h-12"
+              className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 h-12 rounded-lg shadow"
             />
           </div>
-          
           <Button
             onClick={handleNewProject}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-12 px-6"
+            className="bg-gradient-to-r from-yellow-400 to-pink-400 hover:from-yellow-500 hover:to-pink-500 text-white font-bold h-12 px-8 rounded-lg shadow-lg transition-all"
           >
             <Plus className="h-5 w-5 mr-2" />
             New Project
           </Button>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
           {filteredProjects.map((project) => (
             <Card
               key={project.id}
-              className="bg-slate-800 border-slate-700 p-6 cursor-pointer hover:bg-slate-700 transition-all duration-300 hover:scale-105"
+              className="bg-white border-2 border-yellow-50 hover:border-yellow-200 shadow-lg p-6 cursor-pointer hover:scale-105 transition-transform duration-300"
               onClick={() => handleProjectClick(project.id)}
             >
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center">
-                  <FolderOpen className="h-8 w-8 text-purple-400 mr-3" />
+                  <FolderOpen className="h-7 w-7 text-yellow-400 mr-3" />
                   <div>
-                    <h3 className="font-semibold text-lg text-white">{project.name}</h3>
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                    <h3 className="font-semibold text-lg text-slate-900">{project.name}</h3>
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${getStatusColor(project.status)}`}>
                       {project.status}
                     </span>
                   </div>
                 </div>
               </div>
-              
-              <p className="text-gray-400 mb-4 line-clamp-2">{project.description}</p>
-              
-              <div className="flex items-center justify-between text-sm text-gray-500">
+              <p className="text-slate-500 mb-3 line-clamp-2">{project.description}</p>
+              <div className="flex items-center justify-between text-sm text-slate-400">
                 <div className="flex items-center">
                   <User className="h-4 w-4 mr-1" />
                   {project.author}
@@ -133,12 +125,11 @@ export const Home = () => {
             </Card>
           ))}
         </div>
-
         {filteredProjects.length === 0 && (
           <div className="text-center py-12">
-            <FolderOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">No projects found</h3>
-            <p className="text-gray-500">Try adjusting your search or create a new project</p>
+            <FolderOpen className="h-16 w-16 text-yellow-200 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-slate-400 mb-2">No projects found</h3>
+            <p className="text-slate-400">Try a different search or create a new project.</p>
           </div>
         )}
       </div>
